@@ -1,4 +1,6 @@
-export default function TableView({ employees }) {
+import React from "react";
+
+const TableView = ({ employees }) => {
   return (
     <table className="table-auto border-collapse border border-gray-200 w-full">
       <thead>
@@ -15,7 +17,11 @@ export default function TableView({ employees }) {
         {employees.map((employee) => (
           <tr key={employee.id}>
             <td className="border px-4 py-2">
-              <img src={employee.image} alt={employee.firstName} className="w-10 h-10 rounded-full" />
+              <img
+                src={employee.image}
+                alt={employee.firstName}
+                className="w-10 h-10 rounded-full"
+              />
             </td>
             <td className="border px-4 py-2">{employee.firstName}</td>
             <td className="border px-4 py-2">{employee.lastName}</td>
@@ -27,4 +33,6 @@ export default function TableView({ employees }) {
       </tbody>
     </table>
   );
-}
+};
+
+export default TableView;
