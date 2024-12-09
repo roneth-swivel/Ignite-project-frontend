@@ -1,7 +1,7 @@
 "use client"; // Mark this file as a client-side component
 
 import React, { useEffect, useState } from "react";
-import { fetchEmployees } from "../../../utils/api"; // Import API function to fetch employees
+import { fetchEmployees, updateEmployee } from "../../../utils/api"; // Import API functions
 import GridView from "./GridView"; // Import GridView component
 
 const EmployeeList = () => {
@@ -27,6 +27,31 @@ const EmployeeList = () => {
     fetchEmployeeData(); // Call the fetch function
   }, []); // Dependency array ensures the effect runs only once
 
+  // Update employee details and refresh state
+  const handleUpdate = async (updatedEmployee) => {
+    try {
+      const updatedData = await updateEmployee(
+        updatedEmployee._id,
+        updatedEmployee
+      ); // API call
+      setEmployees((prevEmployees) =>
+        prevEmployees.map((emp) =>
+          emp._id === updatedData._id ? updatedData : emp
+        )
+      );
+    } catch (err) {
+      console.error("Failed to update employee:", err); // Log the error
+      setError("Failed to update employee. Please try again.");
+    }
+  };
+
+  // Retry fetching employees
+  const retryFetch = () => {
+    setLoading(true);
+    setError(null);
+    fetchEmployeeData();
+  };
+
   // Display a loading spinner while fetching data
   if (loading) {
     return (
@@ -43,6 +68,12 @@ const EmployeeList = () => {
         <div className="text-center text-red-600 bg-red-100 p-4 rounded-lg shadow-md">
           <h3 className="text-xl font-semibold mb-2">Error</h3>
           <p>{error}</p>
+          <button
+            onClick={retryFetch}
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
@@ -51,9 +82,11 @@ const EmployeeList = () => {
   // Display the employee list when data is available
   return (
     <div className="p-6">
-      <h2 className="text-3xl font-extrabold text-gray-800 mb-6">Employee List</h2>
+      <h2 className="text-3xl font-extrabold text-gray-800 mb-6">
+        Employee List
+      </h2>
       {employees.length > 0 ? (
-        <GridView employees={employees} /> // Render GridView with employees data
+        <GridView employees={employees} onUpdate={handleUpdate} /> // Render GridView with employees data
       ) : (
         <div className="text-center text-gray-500">
           <p>No employees found.</p>
