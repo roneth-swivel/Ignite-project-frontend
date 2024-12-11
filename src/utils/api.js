@@ -12,22 +12,13 @@ const api = axios.create({
 });
 
 // API function to create an employee
-export const createEmployee = async (employeeData) => {
-  try {
-    const response = await api.post("/user", employeeData);
-    return response.data;
-  } catch (error) {
-    throw new Error(
-      error.response?.data?.message || "Error creating employee."
-    );
-  }
-};
+export const createEmployee = (employeeData) => api.post("/user", employeeData);
 
 // API function to fetch all employees
 export const fetchEmployees = async () => {
   try {
     const response = await api.get("/users");
-    return response.data;
+    return response.data.users;
   } catch (error) {
     throw new Error(
       error.response?.data?.message || "Error fetching employees."
