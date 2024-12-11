@@ -1,8 +1,7 @@
 import axios from "axios";
 
 // Configure the base URL for your backend
-const API_BASE_URL =
-  "https://ignite-project-backend-production.up.railway.app/api/";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 // Create an instance of Axios with default configurations
 const api = axios.create({
