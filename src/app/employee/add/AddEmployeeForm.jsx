@@ -38,14 +38,17 @@ const AddEmployee = () => {
       };
 
       const response = await createEmployee(formDataToSend);
-      alert(response.message); // Display success message from the backend
-      setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phoneNumber: "",
-        gender: "M",
-      });
+      if (response.status === 201) {
+        alert("Employee Created Successfully"); // Display success message from the backend
+        setFormData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          phoneNumber: "",
+          gender: "M",
+        });
+        setError(null);
+      }
     } catch (err) {
       setError(err.response?.data?.message || "Error creating employee.");
     } finally {
