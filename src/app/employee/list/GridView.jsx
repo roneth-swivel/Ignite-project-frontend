@@ -1,9 +1,9 @@
+import { deleteEmployee } from "@/utils/api";
 import React, { useState } from "react";
 
 const EmployeeList = ({
   employees = [],
   onUpdate = () => Promise.resolve(),
-  onDelete = () => Promise.resolve(),
 }) => {
   const [isGridView, setIsGridView] = useState(true);
   const [sortedEmployees, setSortedEmployees] = useState([...employees]);
@@ -56,24 +56,22 @@ const EmployeeList = ({
   };
 
   // Delete functionality
-  const handleDelete = (employeeId) => {
+  const handleDelete = async (employeeId) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this employee?"
     );
     if (!confirmDelete) return;
 
-    onDelete(employeeId)
-      .then(() => {
-        const updatedList = sortedEmployees.filter(
-          (emp) => emp._id !== employeeId
-        );
-        setSortedEmployees(updatedList);
+    try {
+      const response = await deleteEmployee(employeeId);
+      if (response) {
         alert("Employee deleted successfully.");
-      })
-      .catch((err) => {
-        console.error("Failed to delete employee:", err);
-        alert("Failed to delete employee. Please try again.");
-      });
+        location.reload();
+      }
+    } catch (error) {
+      console.error("Failed to delete employee:", error);
+      alert("Failed to delete employee. Please try again.");
+    }
   };
 
   // Render empty state if no employees

@@ -38,7 +38,7 @@ const AddEmployee = () => {
       };
 
       const response = await createEmployee(formDataToSend);
-      if (response.status === 201) {
+      if (response.status === 200) {
         alert("Employee Created Successfully"); // Display success message from the backend
         setFormData({
           firstName: "",
