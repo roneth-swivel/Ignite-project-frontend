@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 "use client"; // Mark this file as a client-side component
 
 import React, { useState } from "react";
@@ -55,3 +56,17 @@ const Page = () => {
 };
 
 export default Page;
+=======
+import React from "react";
+import AddEmployee from "./AddEmployeeForm";
+
+const Page = () => {
+  return (
+    <main>
+      <AddEmployee />
+    </main>
+  );
+};
+
+export default Page;
+>>>>>>> cf32ca5666d4a905c419013e5ca8adffb28eee7c
