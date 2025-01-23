@@ -1,59 +1,53 @@
 "use client"; // Mark this file as a client-side component
 
 import React, { useEffect, useState } from "react";
-import { fetchEmployees, updateEmployee } from "../../../utils/api"; // Import API functions
-import GridView from "./GridView"; // Import GridView component
+import { useDispatch, useSelector } from "react-redux";
+import EmployeeRecords from "../../../components/EmployeeRecords";
+import {
+  fetchEmployees,
+  updateEmployee,
+  deleteEmployee
+} from '../../../thunks/employee-thunk';
 
 const EmployeeList = () => {
-  const [employees, setEmployees] = useState([]); // State for employees data
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error state
+  const [editMode, setEditMode] = useState(false);
+
+  const dispatch = useDispatch();
+
+  // Global Redux State for employee list
+  const {
+    data,
+    status,
+    error,
+    updateResult
+  } = useSelector((state) => state.employee);
 
   // Fetch employees when the component mounts
   useEffect(() => {
-    const fetchEmployeeData = async () => {
-      try {
-        const data = await fetchEmployees(); // Fetch employee data from API
-        setEmployees(data); // Set fetched data to state
-        setError(null); // Clear error state
-      } catch (err) {
-        console.error("Failed to fetch employees:", err); // Log the error for debugging
-        setError("Failed to fetch employees. Please try again later.");
-      } finally {
-        setLoading(false); // Stop the loading state
-      }
-    };
-
-    fetchEmployeeData(); // Call the fetch function
-  }, []); // Dependency array ensures the effect runs only once
+    dispatch(fetchEmployees());
+  }, [dispatch])
 
   // Update employee details and refresh state
-  const handleUpdate = async (updatedEmployee) => {
-    try {
-      const updatedData = await updateEmployee(
-        updatedEmployee._id,
-        updatedEmployee
-      ); // API call
-      setEmployees((prevEmployees) =>
-        prevEmployees.map((emp) =>
-          emp._id === updatedData._id ? updatedData : emp
-        )
-      );
-    } catch (err) {
-      console.error("Failed to update employee:", err); // Log the error
-      setError("Failed to update employee. Please try again.");
+  const handleUpdate = async (editedEmployee) => {
+    dispatch(updateEmployee({ id: editedEmployee._id, editedEmployee }))
+    if (updateResult) {
+      if (updateResult.statusCode === 200) {
+        alert(updateResult.message);
+      }
     }
-  };
+  }
+
+  // Create employee details and refresh state
+  const handleDelete = async (id) =>
+    dispatch(deleteEmployee(id))
+
 
   // Retry fetching employees
-  const retryFetch = () => {
-    setLoading(true);
-    setError(null);
-    fetchEmployeeData();
-  };
+  const retryFetch = () =>
+    dispatch(fetchEmployees());
 
   // Display a loading spinner while fetching data
-  if (loading) {
+  if (status === 'loading') {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
@@ -85,8 +79,14 @@ const EmployeeList = () => {
       <h2 className="text-3xl font-extrabold text-gray-800 mb-6">
         Employee List
       </h2>
-      {employees.length > 0 ? (
-        <GridView employees={employees} onUpdate={handleUpdate} /> // Render GridView with employees data
+      {data.users && data.users.length > 0 ? (
+        <EmployeeRecords
+          employees={data.users}
+          onUpdate={handleUpdate}
+          onDelete={handleDelete}
+          setEditMode={setEditMode}
+          editMode={editMode}
+        />
       ) : (
         <div className="text-center text-gray-500">
           <p>No employees found.</p>

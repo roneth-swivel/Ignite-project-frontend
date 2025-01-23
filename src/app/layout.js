@@ -1,9 +1,9 @@
 "use client";
 
-import "../styles/globals.css";
 import { Provider } from "react-redux";
 import store from "../redux/store";
 import AppHeader from "../components/AppHeader";
+import "../styles/globals.css";
 
 export default function RootLayout({ children }) {
   return (
